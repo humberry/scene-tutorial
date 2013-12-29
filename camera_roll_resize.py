@@ -31,25 +31,16 @@ def pic_para(m):
 	print '5 = CMYK'
 	print '6 = YCbCr'
 	print '7 = 32bit Pixel'
-	mAlt = m
+	mOld = m
 	m = int(raw_input('Mode: '))
-	if m == 1:
-		m = '1'
-	elif m == 2:
-		m = 'L'
-	elif m == 3:
-		m = 'RGB'
-	elif m == 4:
-		m = 'RGBA'
-	elif m == 5:
-		m = 'CMYK'
-	elif m == 6:
-		m = 'YCbCr'
-	elif m == 7:
-		m = 'I'
-	else:
-		m = mAlt
-	return m, q
+	menu_options = { 1 : '1',
+					2 : 'L',
+					3 : 'RGB',
+					4 : 'RGBA',
+					5 : 'CMYK',
+					6 : 'YCbCr',
+					7 : 'I' }
+	return menu_options.get(m, mOld), q
 
 def main():
 	pics = photos.get_count()
@@ -57,7 +48,7 @@ def main():
 		print 'Sorry no access or no pictures.'
 		sys.exit()
 	image = photos.pick_image()
-	if (image == None):
+	if not image:
 		print 'Good bye!'
 	else:
 		#Variables: q=quality, m=mode(e.g. RGBA), r=resize(True/False), a=return value from pic_para(), b=orientation, o=option, mp=resolution in megapixels
@@ -74,12 +65,12 @@ def main():
 		mp = round(x * y / 1000000.0, 1)
 		m = image.mode
 		print 'Picture-Information:',
-		print 'resolution = ' + str(x) + ' x ' + str(y) + ' (' + str(mp) + ' MP), mode = ' + m
+		print 'resolution = {} x {} ({} MP), mode = {}'.format(x, y, mp, m)
 		print
 		print '!!! Changing the resolution is time-consuming !!! Resolution higher 6000 x 4000 (24MP) can cause a abend!'
 		print
-		print '0 = Auto processing (Resolution = ' + str(x) + ' x ' + str(y) + ', quality = 95%, mode = ' + m + ')'
-		print '1 = Same resolution (' + str(x) + ' x ' + str(y) + ')'
+		print '0 = Auto processing (Resolution = {} x {}), quality = 95%, mode = {}'.format(x, y, m)
+		print '1 = Same resolution ({} x {})'.format(x, y)
 		print '2 = Define resolution'
 		print '3 = 3MP (2048 x 1536)'
 		print '5 = 5MP (2592 x 1936)'
@@ -153,7 +144,7 @@ def main():
 			print 'Cancel: ' + str(o) + ' is no valid input.'
 			sys.exit()
 		print 'Completed!'
-		print 'Resolution = ' + str(x) + ' x ' + str(y) + ', quality = {0:.0f}'.format(q*100) + '%, mode = ' + m
+		print 'Resolution = {} x {}, quality = {:.0f}%, mode = {}'.format(x, y, q*100, m)
 		
 if __name__ == '__main__':
 	main()
