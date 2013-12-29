@@ -4,10 +4,20 @@ import sys
 import os
 import photos
 
+pic_para_menu_fmt = """
+0 = no change ({})
+1 = black/white
+2 = grey
+3 = RGB no transparency
+4 = RGB with transparency
+5 = CMYK
+6 = YCbCr
+7 = 32bit Pixel"""
+
 def pic_save(image, m, x, y, q, r):
 	print
 	print 'Picture is in process ...'
-	if r == True:
+	if r:
 		image = image.resize((x, y), Image.ANTIALIAS)
 	background = Image.new(m, (x,y), 'white')
 	background.paste(image,(0,0))
@@ -15,47 +25,38 @@ def pic_save(image, m, x, y, q, r):
 	photos.save_image(clipboard.get_image())
 
 def pic_para(m):
-	print
-	q = int(raw_input('Quality (0 - 100): '))
+	q = int(raw_input('\nQuality (0 - 100): '))
 	q = q / 100.0
 	if q < 0.0:
 		q = 0.0
 	elif q > 1.0:
 		q = 1.0
-	print
-	print '0 = no change (' + m + ')'
-	print '1 = black/white'
-	print '2 = grey'
-	print '3 = RGB no transparency'
-	print '4 = RGB with transparency'
-	print '5 = CMYK'
-	print '6 = YCbCr'
-	print '7 = 32bit Pixel'
+	print(pic_para_menu_fmt.format(m))
 	mOld = m
 	m = int(raw_input('Mode: '))
 	menu_options = { 1 : '1',
-					2 : 'L',
-					3 : 'RGB',
-					4 : 'RGBA',
-					5 : 'CMYK',
-					6 : 'YCbCr',
-					7 : 'I' }
+			 2 : 'L',
+			 3 : 'RGB',
+			 4 : 'RGBA',
+			 5 : 'CMYK',
+			 6 : 'YCbCr',
+			 7 : 'I' }
 	return menu_options.get(m, mOld), q
 
 def main():
 	pics = photos.get_count()
-	if (pics == 0):
+	if not pics:
 		print 'Sorry no access or no pictures.'
-		sys.exit()
+		return  # sys.exit()
 	image = photos.pick_image()
 	if not image:
 		print 'Good bye!'
+                return  # ???
 	else:
 		#Variables: q=quality, m=mode(e.g. RGBA), r=resize(True/False), a=return value from pic_para(), b=orientation, o=option, mp=resolution in megapixels
 		r = False 
 		q = 95
-		x = image.size[0]
-		y = image.size[1]
+		x, y = image.size
 		if (x > y):
 			b = 'v'	#vertical
 		elif (y > x):
@@ -79,9 +80,7 @@ def main():
 			pic_save(image, m, x, y, q, r)
 			q = q / 100.0
 		elif o == 1:
-			a = pic_para(m)
-			m = a[0]
-			q = a[1]
+			m, q = pic_para(m)
 			pic_save(image, m, x, y, q, r)
 		elif o == 2:
 			print
@@ -94,9 +93,7 @@ def main():
 				r = True
 				x = x2
 				y = y2
-			a = pic_para(m)
-			m = a[0]
-			q = a[1]
+			m, q = pic_para(m)
 			pic_save(image, m, x, y, q, r)	
 		elif o == 3:
 			if (b == 'v' and x == 2048 and y == 1536):
@@ -115,9 +112,7 @@ def main():
 				else:
 					x = 1536
 					y = 2048
-			a = pic_para(m)
-			m = a[0]
-			q = a[1]
+			m, q = pic_para(m)
 			pic_save(image, m, x, y, q, r)
 		elif o == 5:
 			if (b == 'v' and x == 2592 and y == 1936):
@@ -136,13 +131,11 @@ def main():
 				else:
 					x = 1936
 					y = 2592
-			a = pic_para(m)
-			m = a[0]
-			q = a[1]
+			m, q = pic_para(m)
 			pic_save(image, m, x, y, q, r)
 		else:
-			print 'Cancel: ' + str(o) + ' is no valid input.'
-			sys.exit()
+			print 'Cancel: ' + str(o) + ' is not valid input.'
+			return  # sys.exit()
 		print 'Completed!'
 		print 'Resolution = {} x {}, quality = {:.0f}%, mode = {}'.format(x, y, q*100, m)
 		
