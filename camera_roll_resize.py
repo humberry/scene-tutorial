@@ -14,9 +14,21 @@ pic_para_menu_fmt = """
 6 = YCbCr
 7 = 32bit Pixel"""
 
+pic_info_menu_fmt = """
+Picture-Information:',
+resolution = {x} x {y} ({mp} MP), mode = {m}
+
+!!! Changing the resolution is time-consuming !!! Resolution higher 6000 x 4000 (24MP) can cause a abend!'
+
+0 = Auto processing (Resolution = {x} x {y}), quality = 95%, mode = {m}
+1 = Same resolution ({x} x {y})
+2 = Define resolution
+3 = 3MP (2048 x 1536)
+5 = 5MP (2592 x 1936)"""
+
 def pic_save(image, m, x, y, q, r):
 	print
-	print 'Picture is in process ...'
+	print 'Picture save is in process ...'
 	if r:
 		image = image.resize((x, y), Image.ANTIALIAS)
 	background = Image.new(m, (x,y), 'white')
@@ -25,8 +37,7 @@ def pic_save(image, m, x, y, q, r):
 	photos.save_image(clipboard.get_image())
 
 def pic_para(m):
-	q = int(raw_input('\nQuality (0 - 100): '))
-	q = q / 100.0
+	q = int(raw_input('\nQuality (0 - 100): ')) / 100.0
 	if q < 0.0:
 		q = 0.0
 	elif q > 1.0:
@@ -65,20 +76,14 @@ def main():
 			b = 's'	#square
 		mp = round(x * y / 1000000.0, 1)
 		m = image.mode
-		print 'Picture-Information:',
-		print 'resolution = {} x {} ({} MP), mode = {}'.format(x, y, mp, m)
-		print
-		print '!!! Changing the resolution is time-consuming !!! Resolution higher 6000 x 4000 (24MP) can cause a abend!'
-		print
-		print '0 = Auto processing (Resolution = {} x {}), quality = 95%, mode = {}'.format(x, y, m)
-		print '1 = Same resolution ({} x {})'.format(x, y)
-		print '2 = Define resolution'
-		print '3 = 3MP (2048 x 1536)'
-		print '5 = 5MP (2592 x 1936)'
+		print(pic_info_menu_fmt.format(**{'x':x,'y':y,'mp':mp,'m':m}))
 		o = int(raw_input('Resolution: '))
+                if o not in (0, 1, 2, 3, 5):
+			print 'Cancel: ' + str(o) + ' is not valid input.'
+			return  # sys.exit()
 		if o == 0:
 			pic_save(image, m, x, y, q, r)
-			q = q / 100.0
+			q = q / 100.0  # are these two lines reversed??
 		elif o == 1:
 			m, q = pic_para(m)
 			pic_save(image, m, x, y, q, r)
@@ -133,9 +138,6 @@ def main():
 					y = 2592
 			m, q = pic_para(m)
 			pic_save(image, m, x, y, q, r)
-		else:
-			print 'Cancel: ' + str(o) + ' is not valid input.'
-			return  # sys.exit()
 		print 'Completed!'
 		print 'Resolution = {} x {}, quality = {:.0f}%, mode = {}'.format(x, y, q*100, m)
 		
