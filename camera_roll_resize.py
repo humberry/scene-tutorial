@@ -14,37 +14,35 @@ pic_para_menu_fmt = """
 6 = YCbCr
 7 = 32bit Pixel"""
 
-pic_info_menu_fmt = """
-Picture-Information:',
-resolution = {x} x {y} ({mp} MP), mode = {m}
+pic_info_menu_fmt = """Picture-Information: resolution = {width} x {height} ({megapixels} MP), mode = {image_mode}
 
-!!! Changing the resolution is time-consuming !!! Resolution higher 6000 x 4000 (24MP) can cause a abend!'
+!!! Changing the resolution is time-consuming !!! Resolution higher 6000 x 4000 (24MP) can cause a abend!
 
-0 = Auto processing (Resolution = {x} x {y}), quality = 95%, mode = {m}
-1 = Same resolution ({x} x {y})
+0 = Auto processing (Resolution = {width} x {height}), quality = 95%, mode = {image_mode}
+1 = Same resolution ({width} x {height})
 2 = Define resolution
 3 = 3MP (2048 x 1536)
 5 = 5MP (2592 x 1936)"""
 
-def pic_save(image, m, x, y, q, r):
+def pic_save(image, image_mode, width, height, quality, resize):
 	print
 	print 'Picture save is in process ...'
-	if r:
-		image = image.resize((x, y), Image.ANTIALIAS)
-	background = Image.new(m, (x,y), 'white')
+	if resize:
+		image = image.resize((width, height), Image.ANTIALIAS)
+	background = Image.new(image_mode, (width,height), 'white')
 	background.paste(image,(0,0))
-	clipboard.set_image((background), format='jpeg', jpeg_quality=q)
+	clipboard.set_image((background), format='jpeg', jpeg_quality=quality)
 	photos.save_image(clipboard.get_image())
 
-def pic_para(m):
-	q = int(raw_input('\nQuality (0 - 100): ')) / 100.0
-	if q < 0.0:
-		q = 0.0
-	elif q > 1.0:
-		q = 1.0
-	print(pic_para_menu_fmt.format(m))
-	mOld = m
-	m = int(raw_input('Mode: '))
+def pic_para(image_mode):
+	quality = int(raw_input('\nQuality (0 - 100): ')) / 100.0
+	if quality < 0.0:
+		quality = 0.0
+	elif quality > 1.0:
+		quality = 1.0
+	print(pic_para_menu_fmt.format(image_mode))
+	mOld = image_mode
+	image_mode = int(raw_input('Mode: '))
 	menu_options = { 1 : '1',
 			 2 : 'L',
 			 3 : 'RGB',
@@ -52,94 +50,93 @@ def pic_para(m):
 			 5 : 'CMYK',
 			 6 : 'YCbCr',
 			 7 : 'I' }
-	return menu_options.get(m, mOld), q
+	return menu_options.get(image_mode, mOld), quality
 
 def main():
 	pics = photos.get_count()
 	if not pics:
 		print 'Sorry no access or no pictures.'
-		return  # sys.exit()
+		return
 	image = photos.pick_image()
 	if not image:
 		print 'Good bye!'
-                return  # ???
+		return
 	else:
-		#Variables: q=quality, m=mode(e.g. RGBA), r=resize(True/False), a=return value from pic_para(), b=orientation, o=option, mp=resolution in megapixels
-		r = False 
-		q = 95
-		x, y = image.size
-		if (x > y):
-			b = 'v'	#vertical
-		elif (y > x):
-			b = 'h'	#horizontal
+		resize = False 
+		quality = 95
+		width, height = image.size
+		if (width > height):
+			orientation = 'vertical'
+		elif (height > width):
+			orientation = 'horizontal'
 		else:
-			b = 's'	#square
-		mp = round(x * y / 1000000.0, 1)
-		m = image.mode
-		print(pic_info_menu_fmt.format(**{'x':x,'y':y,'mp':mp,'m':m}))
-		o = int(raw_input('Resolution: '))
-                if o not in (0, 1, 2, 3, 5):
-			print 'Cancel: ' + str(o) + ' is not valid input.'
-			return  # sys.exit()
-		if o == 0:
-			pic_save(image, m, x, y, q, r)
-			q = q / 100.0  # are these two lines reversed??
-		elif o == 1:
-			m, q = pic_para(m)
-			pic_save(image, m, x, y, q, r)
-		elif o == 2:
+			orientation = 'square'
+		megapixels = round(width * height / 1000000.0, 1)
+		image_mode = image.mode
+		print(pic_info_menu_fmt.format(**{'width':width,'height':height,'megapixels':megapixels,'image_mode':image_mode}))
+		option = int(raw_input('Resolution: '))
+		if option not in (0, 1, 2, 3, 5):
+			print 'Cancel: ' + str(option) + ' is not valid input.'
+			return
+		if option == 0:
+			pic_save(image, image_mode, width, height, quality, resize)
+			quality = quality / 100.0  # are these two lines reversed??
+		elif option == 1:
+			image_mode, quality = pic_para(image_mode)
+			pic_save(image, image_mode, width, height, quality, resize)
+		elif option == 2:
 			print
 			print 'Changing the ratio causes picture deformation!'
-			x2 = int(raw_input('Width: '))
-			y2 = int(raw_input('Height: '))
-			if (x2 == x and y2 == y):
-				r = False
+			width2 = int(raw_input('Width: '))
+			height2 = int(raw_input('Height: '))
+			if (width2 == width and height2 == height):
+				resize = False
 			else:
-				r = True
-				x = x2
-				y = y2
-			m, q = pic_para(m)
-			pic_save(image, m, x, y, q, r)	
-		elif o == 3:
-			if (b == 'v' and x == 2048 and y == 1536):
-				r = False
-				x = 2048
-				y = 1536
-			elif (b == 'h' and x == 1536 and y == 2048):
-				r = False
-				x = 1536
-				y = 2048
+				resize = True
+				width = width2
+				height = height2
+			image_mode, quality = pic_para(image_mode)
+			pic_save(image, image_mode, width, height, quality, resize)	
+		elif option == 3:
+			if (orientation == 'vertical' and width == 2048 and height == 1536):
+				resize = False
+				width = 2048
+				height = 1536
+			elif (orientation == 'horizontal' and width == 1536 and height == 2048):
+				resize = False
+				width = 1536
+				height = 2048
 			else:
-				r = True
-				if (b == 'v' or b == 's'):
-					x = 2048
-					y = 1536
+				resize = True
+				if (orientation == 'vertical' or orientation == 'square'):
+					width = 2048
+					height = 1536
 				else:
-					x = 1536
-					y = 2048
-			m, q = pic_para(m)
-			pic_save(image, m, x, y, q, r)
-		elif o == 5:
-			if (b == 'v' and x == 2592 and y == 1936):
-				r = False
-				x = 2592
-				y = 1936
-			elif (b == 'h' and x == 1936 and y == 2592):
-				r = False
-				x = 1936
-				y = 2592
+					width = 1536
+					height = 2048
+			image_mode, quality = pic_para(image_mode)
+			pic_save(image, image_mode, width, height, quality, resize)
+		elif option == 5:
+			if (orientation == 'vertical' and width == 2592 and height == 1936):
+				resize = False
+				width = 2592
+				height = 1936
+			elif (orientation == 'horizontal' and width == 1936 and height == 2592):
+				resize = False
+				width = 1936
+				height = 2592
 			else:
-				r = True
-				if (b == 'v' or b == 's'):
-					x = 2592
-					y = 1936
+				resize = True
+				if (orientation == 'vertical' or orientation == 'square'):
+					width = 2592
+					height = 1936
 				else:
-					x = 1936
-					y = 2592
-			m, q = pic_para(m)
-			pic_save(image, m, x, y, q, r)
+					width = 1936
+					height = 2592
+			image_mode, quality = pic_para(image_mode)
+			pic_save(image, image_mode, width, height, quality, resize)
 		print 'Completed!'
-		print 'Resolution = {} x {}, quality = {:.0f}%, mode = {}'.format(x, y, q*100, m)
+		print 'Resolution = {} x {}, quality = {:.0f}%, mode = {}'.format(width, height, quality*100, image_mode)
 		
 if __name__ == '__main__':
 	main()
