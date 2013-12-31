@@ -31,6 +31,8 @@ def pic_save(image, image_mode, width, height, quality, resize):
     background.paste(image, (0, 0))
     clipboard.set_image((background), format='jpeg', jpeg_quality=quality)
     photos.save_image(clipboard.get_image())
+    fmt = 'Completed!\nResolution = {} x {}, quality = {:.0f}%, mode = {}'
+    print(fmt.format(width, height, quality * 100, image_mode))
 
 def pic_para(image_mode):
     quality = int(raw_input('\nQuality (0 - 100): ')) / 100.0
@@ -82,10 +84,8 @@ def main():
 
     if option == 0:
         quality /= 100.0
-        pic_save(image, image_mode, width, height, quality, resize)
     elif option == 1:
         image_mode, quality = pic_para(image_mode)
-        pic_save(image, image_mode, width, height, quality, resize)
     elif option == 2:
         print('\nChanging the ratio causes picture deformation!')
         width2 = int(raw_input('Width: '))
@@ -99,7 +99,6 @@ def main():
             width = width2
             height = height2
         image_mode, quality = pic_para(image_mode)
-        pic_save(image, image_mode, width, height, quality, resize)
     elif option == 3:
         if (orientation == 'vertical' and width == 2048 and height == 1536):
             resize = False
@@ -114,7 +113,6 @@ def main():
                 width = 1536
                 height = 2048
         image_mode, quality = pic_para(image_mode)
-        pic_save(image, image_mode, width, height, quality, resize)
     elif option == 5:
         if (orientation == 'vertical' and width == 2592 and height == 1936):
             resize = False
@@ -129,9 +127,7 @@ def main():
                 width = 1936
                 height = 2592
         image_mode, quality = pic_para(image_mode)
-        pic_save(image, image_mode, width, height, quality, resize)
-    fmt = 'Completed!\nResolution = {} x {}, quality = {:.0f}%, mode = {}'
-    print(fmt.format(width, height, quality * 100, image_mode))
+    pic_save(image, image_mode, width, height, quality, resize)
 
 if __name__ == '__main__':
     main()
