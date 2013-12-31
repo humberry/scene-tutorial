@@ -1,14 +1,7 @@
-# Questions:  Lines 122, 125, 141, 144:  orientation == 'square' but width != height???
-# Should line 92 before or after line 91?  Is line 92 needed at all?
-# What is the sense of lines 112, 113, 116, 117, 131, 132, 135, 136???  The if proves these values to be true already.
-# After you ask the width on line 98 you should calculate the height that preserves to original image's ratio.
-# You can show that calculated height to the user and say that they will distort the image if they pick any different height value.
-
 import clipboard
 import Image
 import os
 import photos
-import sys
 
 pic_para_menu_fmt = """
 0 = no change ({})
@@ -88,16 +81,17 @@ def main():
         return
 
     if option == 0:
+        quality /= 100.0
         pic_save(image, image_mode, width, height, quality, resize)
-        quality /= 100.0  # are these two lines reversed??
     elif option == 1:
         image_mode, quality = pic_para(image_mode)
         pic_save(image, image_mode, width, height, quality, resize)
     elif option == 2:
         print('\nChanging the ratio causes picture deformation!')
         width2 = int(raw_input('Width: '))
-        # calculate and show user height to use if they want to avoid distortion
-        height2 = int(raw_input('Height: '))
+        ratio = width / (height * 1.0)
+        suggestion = width2 / ratio
+        height2 = int(raw_input('Height: {:.0f}'.format(suggestion)) or suggestion)
         if (width2 == width and height2 == height):
             resize = False
         else:
@@ -109,39 +103,31 @@ def main():
     elif option == 3:
         if (orientation == 'vertical' and width == 2048 and height == 1536):
             resize = False
-            # width = 2048   # this line is useless!  The if above proves that.
-            # height = 1536  # this line is useless!  The if above proves that.
         elif (orientation == 'horizontal' and width == 1536 and height == 2048):
             resize = False
-            # width = 1536   # this line is useless!  The if above proves that.
-            # height = 2048  # this line is useless!  The if above proves that.
         else:
             resize = True
             if (orientation == 'vertical' or orientation == 'square'):
                 width = 2048
-                height = 1536  # how could the orientation == 'square' if width != height??
+                height = 1536
             else:
                 width = 1536
-                height = 2048  # how could the orientation == 'square' if width != height??
+                height = 2048
         image_mode, quality = pic_para(image_mode)
         pic_save(image, image_mode, width, height, quality, resize)
     elif option == 5:
         if (orientation == 'vertical' and width == 2592 and height == 1936):
             resize = False
-            width = 2592   # this line is useless!  The if above proves that.
-            height = 1936  # this line is useless!  The if above proves that.
         elif (orientation == 'horizontal' and width == 1936 and height == 2592):
             resize = False
-            width = 1936   # this line is useless!  The if above proves that.
-            height = 2592  # this line is useless!  The if above proves that.
         else:
             resize = True
             if (orientation == 'vertical' or orientation == 'square'):
                 width = 2592
-                height = 1936  # how could the orientation == 'square' if width != height??
+                height = 1936
             else:
                 width = 1936
-                height = 2592  # how could the orientation == 'square' if width != height??
+                height = 2592
         image_mode, quality = pic_para(image_mode)
         pic_save(image, image_mode, width, height, quality, resize)
     fmt = 'Completed!\nResolution = {} x {}, quality = {:.0f}%, mode = {}'
