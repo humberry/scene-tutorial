@@ -91,7 +91,7 @@ def main():
         width2 = int(raw_input('Width: '))
         ratio = width / (height * 1.0)
         suggestion = width2 / ratio
-        height2 = int(raw_input('Height: {:.0f}'.format(suggestion)) or suggestion)
+        height2 = int(raw_input('Height [Enter = {:.0f}]:'.format(suggestion)) or suggestion)
         if (width2 == width and height2 == height):
             resize = False
         else:
