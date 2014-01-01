@@ -1,6 +1,5 @@
 import clipboard
 import Image
-import os
 import photos
 
 pic_para_menu_fmt = """
