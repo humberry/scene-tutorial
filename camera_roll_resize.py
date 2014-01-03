@@ -64,12 +64,6 @@ def main():
     resize = False
     quality = 95
     width, height = image.size
-    if (width > height):
-        orientation = 'vertical'
-    elif (height > width):
-        orientation = 'horizontal'
-    else:
-        orientation = 'square'
     megapixels = round(width * height / 1000000.0, 1)
     image_mode = image.mode
     print(pic_info_menu_fmt.format(**{ 'width'      : width,
@@ -99,32 +93,22 @@ def main():
             height = height2
         image_mode, quality = pic_para(image_mode)
     elif option == 3:
-        if (orientation == 'vertical' and width == 2048 and height == 1536):
-            resize = False
-        elif (orientation == 'horizontal' and width == 1536 and height == 2048):
-            resize = False
-        else:
-            resize = True
-            if (orientation == 'vertical' or orientation == 'square'):
-                width = 2048
-                height = 1536
+        resolution3megapixel = (2048, 1536)
+        resize = not (width in resolution3megapixel and height in resolution3megapixel)
+        if resize:
+            if width >= height:  # Landscape or Square
+                width, height = resolution3megapixel  # Landscape
             else:
-                width = 1536
-                height = 2048
+                height, width = resolution3megapixel  # Portrait
         image_mode, quality = pic_para(image_mode)
     elif option == 5:
-        if (orientation == 'vertical' and width == 2592 and height == 1936):
-            resize = False
-        elif (orientation == 'horizontal' and width == 1936 and height == 2592):
-            resize = False
-        else:
-            resize = True
-            if (orientation == 'vertical' or orientation == 'square'):
-                width = 2592
-                height = 1936
+        resolution5megapixel = (2592, 1936)
+        resize = not (width in resolution5megapixel and height in resolution5megapixel)
+        if resize:
+            if width >= height:  # Landscape or Square
+                width, height = resolution5megapixel  # Landscape
             else:
-                width = 1936
-                height = 2592
+                height, width = resolution5megapixel  # Portrait
         image_mode, quality = pic_para(image_mode)
     pic_save(image, image_mode, width, height, quality, resize)
 
