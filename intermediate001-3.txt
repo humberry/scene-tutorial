@@ -1,5 +1,5 @@
 Exercise:
-Please combine the techniques you learned in beginner007.py, intermediate001.py and intermediate002.py.
+Please combine the techniques you learned in beginner007.py, intermediate001-1.py and intermediate001-2.py.
 
 - open a picture from the camera roll (self.layer)
 - use the the two finger gesture (zoom in/out) for changing the scale_x and scale_y factor (Layer.animate)
