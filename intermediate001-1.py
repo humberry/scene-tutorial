@@ -4,13 +4,15 @@ import scene
 class PhotoText(scene.Scene):
     def __init__(self):
         self.img = photos.pick_image()
-        self.picsize = scene.Size(*self.img.size)
         if self.img:
+            self.picsize = scene.Size(*self.img.size)
             scene.run(self)
         else:
             print('Good bye!')
-    def setup(self):
-        self.layer = scene.Layer(scene.Rect(0, 0, self.bounds.w, self.bounds.h))        self.layer.image = scene.load_pil_image(self.img)
+
+    def setup(self):
+        self.layer = scene.Layer(self.bounds)
+        self.layer.image = scene.load_pil_image(self.img)
         self.add_layer(self.layer)
         
     def draw(self):
