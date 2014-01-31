@@ -11,14 +11,17 @@ class PhotoText(scene.Scene):
         self.zoom = 1.0        #no zoom
         self.zoom_min = 0.5
         self.zoom_max = 5
+        self.zoom_speed = 3
         self.img = photos.pick_image()
         if self.img:
             self.picsize = scene.Size(*self.img.size)
             scene.run(self)
         else:
             print('Good bye!')
-            def setup(self):
-        self.layer = scene.Layer(self.bounds)        self.layer.image = scene.load_pil_image(self.img)
+        
+    def setup(self):
+        self.layer = scene.Layer(self.bounds)
+        self.layer.image = scene.load_pil_image(self.img)
         self.add_layer(self.layer)
         
     def draw(self):
@@ -39,8 +42,9 @@ class PhotoText(scene.Scene):
             else:
                 self.distance_new = math.sqrt(math.pow((locations[1][0] - locations[0][0]),2) + pow((locations[1][1] - locations[0][1]),2))
                 self.distance_abs = self.distance_new - self.distance_old
+                self.reset = True
             if self.distance_abs != 0:
-                zoom_new = self.distance_abs/self.bounds.w/10
+                zoom_new = self.distance_abs/self.bounds.w*self.zoom_speed
                 if zoom_new < 0:
                     self.zoom += zoom_new
                 else:
