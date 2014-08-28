@@ -12,7 +12,8 @@ class PhotoText(scene.Scene):
         self.zoom_min = 0.5
         self.zoom_max = 5
         self.zoom_speed = 3
-        self.img = photos.pick_image()
+        self.img2 = photos.pick_image()
+        self.img = self.img2.convert('RGBA') #fix for current scene.load_pil_image()
         if self.img:
             self.picsize = scene.Size(*self.img.size)
             scene.run(self)
@@ -69,4 +70,3 @@ else:
 # One finger moves the image section
 # Rotating?
 # ...
-
