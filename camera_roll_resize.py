@@ -56,7 +56,8 @@ def main():
         print('Sorry no access or no pictures.')
         return
 
-    image = photos.pick_image()
+    image2 = photos.pick_image()
+    image = image2.convert('RGBA') #fix for current scene.load_pil_image()
     if not image:
         print('No image selected.  Good bye!')
         return
