@@ -3,7 +3,8 @@ import scene
 
 class PhotoText(scene.Scene):
     def __init__(self):
-        self.img = photos.pick_image()
+        self.img2 = photos.pick_image()
+        self.img = self.img2.convert('RGBA') #fix for current scene.load_pil_image()
         if self.img:
             self.picsize = scene.Size(*self.img.size)
             scene.run(self)
