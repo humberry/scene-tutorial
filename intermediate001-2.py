@@ -3,6 +3,7 @@ import math
 
 class MyScene (Scene):
     def __init__(self):
+        Scene.__init__(self)
         self.distance_old = 0.0
         self.distance_new = 0.0
         self.reset = True
