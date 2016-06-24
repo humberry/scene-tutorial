@@ -4,7 +4,7 @@ class MyClass(scene.Scene):
     def __init__(self):
         # good place to define/initialize variables
         # it's only called one time, when the Scene object is created
-        pass
+        scene.Scene.__init__(self)
     
     def setup(self):
         # good place to define/initialize layers
