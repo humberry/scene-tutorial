@@ -4,6 +4,7 @@ import math
 
 class PhotoText(scene.Scene):
     def __init__(self):
+        scene.Scene.__init__(self)
         self.distance_old = 0.0
         self.distance_new = 0.0
         self.distance_abs = 0.0
